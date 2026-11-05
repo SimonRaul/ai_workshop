@@ -1,0 +1,43 @@
+{
+  "skill_name": "unit-test-writer",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Write unit tests for onlineshopapi/src/main/java/msg/onlineshopapi/service/strategy/MostAbundantStrategy.java. Follow the existing strategy test style and use JUnit 5, Mockito, and AssertJ. Cover success, insufficient stock, missing stock, and multiple products. Do not change production code if a test exposes a bug.",
+      "expected_output": "A focused MostAbundantStrategyTest.java with one test per meaningful scenario, private fixture helpers, repository interaction assertions, and an explicit report of any failing bug-revealing test.",
+      "files": [
+        "onlineshopapi/src/test/java/msg/onlineshopapi/unit/service/strategy/MostAbundantStrategyTest.java"
+      ],
+      "expectations": [
+        "Uses JUnit 5 with MockitoExtension, Mock/InjectMocks where appropriate, and AssertJ assertions.",
+        "Contains separate tests for success, insufficient quantity, no stock, and multiple-product behavior.",
+        "Uses private helper methods for repeated Product, Location, Stock, or OrderDetail setup.",
+        "Does not modify production code to hide a failing test."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Generate unit tests for the Spring Boot service method I provide, including normal behavior, empty input, boundary quantities, collaborator failures, and domain exceptions. First list the scenarios, then write one JUnit 5 test per scenario using Mockito and AssertJ. Inspect nearby tests and preserve their naming convention. If the implementation appears buggy, keep the failing test and tell me why it fails.",
+      "expected_output": "Tests for the supplied service method with a scenario list, local convention matching, private fixture helpers, broad edge-case coverage, and clear separation between passing tests and intentionally failing defect tests.",
+      "files": [],
+      "expectations": [
+        "Lists scenarios before implementing tests.",
+        "Covers success, boundaries, empty or invalid inputs, collaborator failure, and relevant exceptions when applicable.",
+        "Uses one focused test per scenario and private helpers for repeated setup.",
+        "Reports suspected defects without changing production code."
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Add unit tests for an entire Spring Boot service class with several public methods. Use pure Mockito-based unit tests rather than loading the application context unless required by the existing project. Aim for at least 80% meaningful coverage, prioritize edge cases, run the smallest relevant Maven test command, and report coverage limitations honestly.",
+      "expected_output": "A maintainable test class or set of test classes covering the service's public behavior and edge cases, with Mockito/AssertJ, private helpers, validation results, and honest coverage evidence.",
+      "files": [],
+      "expectations": [
+        "Tests public behavior across the service methods rather than private implementation details.",
+        "Avoids unnecessary Spring context or integration dependencies.",
+        "Runs an appropriate targeted Maven test command and reports its result.",
+        "Does not claim 80% coverage without measurement or explain why measurement was unavailable."
+      ]
+    }
+  ]
+}
