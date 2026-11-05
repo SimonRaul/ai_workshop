@@ -2,7 +2,9 @@ package msg.onlineshopapi.unit.service;
 
 import msg.onlineshopapi.exception.OrderNotProcessableException;
 import msg.onlineshopapi.exception.ResourceNotFoundException;
+import msg.onlineshopapi.exception.InvalidOrderException;
 import msg.onlineshopapi.model.Location;
+import msg.onlineshopapi.model.Address;
 import msg.onlineshopapi.model.Order;
 import msg.onlineshopapi.model.OrderDetail;
 import msg.onlineshopapi.model.Product;
@@ -135,6 +137,17 @@ class OrderServiceTest {
     }
 
     @Test
+    void createOrder_rejectsMissingAddress_beforeResolvingUserOrStock() {
+        Order order = Order.builder().id(UUID.randomUUID()).build();
+
+        assertThatThrownBy(() -> orderService.createOrder(order, CUSTOMER_EMAIL))
+                .isInstanceOf(InvalidOrderException.class)
+                .hasMessage("Delivery address is required");
+
+        verifyNoInteractions(userRepository, orderStrategy, orderRepository, stockRepository);
+    }
+
+    @Test
     void createOrder_createsOrderWithoutStockChanges_whenCartIsEmpty() {
         User user = user();
         Order order = order(UUID.randomUUID());
@@ -161,7 +174,14 @@ class OrderServiceTest {
     }
 
     private Order order(UUID id, OrderDetail... details) {
-        return Order.builder().id(id).orderDetails(new HashSet<>(Set.of(details))).build();
+        return Order.builder().id(id).address(address())
+                .orderDetails(new HashSet<>(Set.of(details))).build();
+    }
+
+    private Address address() {
+        return Address.builder()
+                .country("Romania").city("Cluj-Napoca").county("Cluj")
+                .streetAddress("Strada Memorandumului 1").build();
     }
 
     private OrderDetail orderDetail(Product product, int quantity) {

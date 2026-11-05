@@ -2,6 +2,7 @@ package msg.onlineshopapi.service;
 
 import lombok.RequiredArgsConstructor;
 import msg.onlineshopapi.exception.ResourceNotFoundException;
+import msg.onlineshopapi.exception.InvalidOrderException;
 import msg.onlineshopapi.model.*;
 import msg.onlineshopapi.repository.OrderRepository;
 import msg.onlineshopapi.repository.StockRepository;
@@ -36,6 +37,9 @@ public class OrderService {
 
     @Transactional
     public Order createOrder(Order order, String email) {
+        if (order.getAddress() == null) {
+            throw new InvalidOrderException("Delivery address is required");
+        }
         resolveUser(order, email);
         Set<OrderDetail> orderDetails = mergeDuplicateProducts(order.getOrderDetails());
         Map<UUID, Integer> quantityByProduct = orderDetails.stream()

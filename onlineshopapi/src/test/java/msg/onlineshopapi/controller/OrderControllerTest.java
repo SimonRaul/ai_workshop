@@ -5,6 +5,7 @@ import msg.onlineshopapi.config.TestSecurityConfig;
 import msg.onlineshopapi.dto.OrderItemRequestDto;
 import msg.onlineshopapi.dto.OrderRequestDto;
 import msg.onlineshopapi.dto.OrderResponseDto;
+import msg.onlineshopapi.dto.AddressDto;
 import msg.onlineshopapi.dto.mapper.OrderMapper;
 import msg.onlineshopapi.exception.OrderNotProcessableException;
 import msg.onlineshopapi.model.Order;
@@ -99,6 +100,7 @@ class OrderControllerTest {
     @WithMockUser(username = "customer@test.com", roles = "CUSTOMER")
     void create_returnsOrder() throws Exception {
         OrderRequestDto request = OrderRequestDto.builder()
+                .address(address())
                 .items(List.of(OrderItemRequestDto.builder()
                         .productId(productId).quantity(2).build()))
                 .build();
@@ -122,6 +124,7 @@ class OrderControllerTest {
     @WithMockUser(username = "customer@test.com", roles = "CUSTOMER")
     void create_returns422_whenOrderNotProcessable() throws Exception {
         OrderRequestDto request = OrderRequestDto.builder()
+                .address(address())
                 .items(List.of(OrderItemRequestDto.builder()
                         .productId(productId).quantity(999).build()))
                 .build();
@@ -139,12 +142,36 @@ class OrderControllerTest {
                 .andExpect(jsonPath("$.error").value("Insufficient stock"));
     }
 
+    @Test
+    @WithMockUser(username = "customer@test.com", roles = "CUSTOMER")
+    void create_returns400_whenAddressIsMissing() throws Exception {
+        OrderRequestDto request = OrderRequestDto.builder()
+                .items(List.of(OrderItemRequestDto.builder()
+                        .productId(productId).quantity(1).build()))
+                .build();
+
+        mockMvc.perform(post("/orders")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request))
+                        .principal(() -> "customer@test.com"))
+                .andExpect(status().isBadRequest());
+    }
+
     private OrderResponseDto orderResponse(UUID id) {
         return OrderResponseDto.builder()
                 .id(id)
                 .userId(userId)
                 .createdAt(LocalDateTime.of(2026, 3, 23, 12, 0))
                 .details(List.of())
+                .build();
+    }
+
+    private AddressDto address() {
+        return AddressDto.builder()
+                .country("Romania")
+                .city("Cluj-Napoca")
+                .county("Cluj")
+                .streetAddress("Strada Memorandumului 1")
                 .build();
     }
 }
