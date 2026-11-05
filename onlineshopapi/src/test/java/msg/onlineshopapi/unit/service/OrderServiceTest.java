@@ -8,6 +8,7 @@ import msg.onlineshopapi.model.OrderDetail;
 import msg.onlineshopapi.model.Product;
 import msg.onlineshopapi.model.Stock;
 import msg.onlineshopapi.model.StockId;
+import msg.onlineshopapi.model.Supplier;
 import msg.onlineshopapi.model.User;
 import msg.onlineshopapi.repository.OrderRepository;
 import msg.onlineshopapi.repository.StockRepository;
@@ -153,7 +154,9 @@ class OrderServiceTest {
     }
 
     private Product product() {
-        return Product.builder().id(UUID.randomUUID()).name("Product").build();
+        return Product.builder().id(UUID.randomUUID()).name("Product")
+                .supplier(Supplier.builder().id(UUID.randomUUID()).name("Supplier").location("Location").build())
+                .build();
     }
 
     private User user() {

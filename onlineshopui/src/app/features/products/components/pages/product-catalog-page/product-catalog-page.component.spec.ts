@@ -30,6 +30,7 @@ describe('ProductCatalogPageComponent', () => {
     };
     let notificationsServiceMock: {
         notifySuccess: ReturnType<typeof vi.fn>;
+        notifyError: ReturnType<typeof vi.fn>;
     };
     let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
 
@@ -53,7 +54,8 @@ describe('ProductCatalogPageComponent', () => {
         };
 
         notificationsServiceMock = {
-            notifySuccess: vi.fn()
+            notifySuccess: vi.fn(),
+            notifyError: vi.fn()
         };
 
         TestBed.configureTestingModule({
