@@ -1,0 +1,23 @@
+{
+  "skill_name": "architecture-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Where should I add a reusable price display component that is used by products, cart, and orders, and why?",
+      "expected_output": "Recommends the shared Angular UI area under clib, explains the feature-boundary rule, and distinguishes reusable presentation from cross-cutting infrastructure.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Can the frontend rolesGuard be our only protection for product deletion? Explain the architecture constraint and request flow.",
+      "expected_output": "Rejects frontend-only authorization, identifies Spring Security as authoritative, and explains the browser-to-security-filter-to-controller flow.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "We want Hibernate to automatically update the production schema for a new order column. Does that fit this project's arhitecture?",
+      "expected_output": "Identifies the conflict with Flyway ownership and Hibernate validation-only mode, then recommends a migration and notes the affected persistence contracts.",
+      "files": []
+    }
+  ]
+}
