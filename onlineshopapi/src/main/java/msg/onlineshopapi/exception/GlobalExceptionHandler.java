@@ -7,12 +7,29 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.time.LocalDateTime;
 import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, Object>> handleValidation(MethodArgumentNotValidException ex) {
+        Map<String, String> fields = ex.getBindingResult().getFieldErrors().stream()
+                .collect(java.util.stream.Collectors.toMap(
+                        error -> error.getField(),
+                        error -> error.getDefaultMessage(),
+                        (first, ignored) -> first
+                ));
+        return ResponseEntity.badRequest().body(Map.of(
+                "timestamp", LocalDateTime.now(),
+                "status", 400,
+                "error", "Validation failed",
+                "fields", fields
+        ));
+    }
 
     @ExceptionHandler(DuplicateResourceException.class)
     public ResponseEntity<Map<String, Object>> handleDuplicateResource(DuplicateResourceException ex) {

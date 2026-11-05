@@ -44,6 +44,7 @@ public class OrderMapper {
 
         return Order.builder()
                 .orderDetails(details)
+                .address(addressMapper.toEntity(dto.getAddress()))
                 .build();
     }
 }
