@@ -57,6 +57,14 @@ function handleGetOrderById(id: string): HttpResponse<unknown> {
 }
 
 function handleCreateOrder(body: CreateOrderDto): HttpResponse<unknown> {
+    if (!isValidCreateOrder(body)) {
+        return new HttpResponse({
+            status: 400,
+            statusText: 'Bad Request',
+            body: { message: 'A complete delivery address and items are required' }
+        });
+    }
+
     const items = body.items ?? [];
     const details = items
         .map(item => {
@@ -87,12 +95,7 @@ function handleCreateOrder(body: CreateOrderDto): HttpResponse<unknown> {
         id: `order-${mockOrderIdCounter++}`,
         userId: MOCK_USERS[0]?.id ?? 'user-1',
         createdAt: new Date().toISOString(),
-        address: {
-            country: 'USA',
-            city: 'Seattle',
-            county: 'King',
-            streetAddress: '123 Pine Street'
-        },
+        address: body.address,
         details
     };
 
@@ -102,4 +105,15 @@ function handleCreateOrder(body: CreateOrderDto): HttpResponse<unknown> {
         status: 201,
         body: createdOrder
     });
+}
+
+function isValidCreateOrder(body: CreateOrderDto): boolean {
+    return (
+        Array.isArray(body?.items) &&
+        body.items.length > 0 &&
+        Boolean(body?.address) &&
+        Object.values(body.address).every(
+            value => typeof value === 'string' && value.trim().length > 0
+        )
+    );
 }

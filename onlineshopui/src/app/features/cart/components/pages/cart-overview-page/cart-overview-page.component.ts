@@ -6,6 +6,13 @@ import {
     inject,
     signal
 } from '@angular/core';
+import {
+    AbstractControl,
+    FormControl,
+    FormGroup,
+    ReactiveFormsModule,
+    Validators
+} from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { take } from 'rxjs';
 import { CartService } from '../../../services/cart.service';
@@ -24,7 +31,13 @@ import {
 
 @Component({
     selector: 'app-cart-overview-page',
-    imports: [SpinnerComponent, CartItemRowComponent, CartSummaryComponent, RouterLink],
+    imports: [
+        SpinnerComponent,
+        CartItemRowComponent,
+        CartSummaryComponent,
+        RouterLink,
+        ReactiveFormsModule
+    ],
     templateUrl: './cart-overview-page.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -40,6 +53,24 @@ export class CartOverviewPageComponent implements OnInit {
     readonly loading = this.productService.loading;
     readonly error = this.productService.error;
     readonly isSubmitting = signal(false);
+    readonly addressForm = new FormGroup({
+        country: new FormControl('', {
+            nonNullable: true,
+            validators: [Validators.required, nonWhitespaceValidator]
+        }),
+        city: new FormControl('', {
+            nonNullable: true,
+            validators: [Validators.required, nonWhitespaceValidator]
+        }),
+        county: new FormControl('', {
+            nonNullable: true,
+            validators: [Validators.required, nonWhitespaceValidator]
+        }),
+        streetAddress: new FormControl('', {
+            nonNullable: true,
+            validators: [Validators.required, nonWhitespaceValidator]
+        })
+    });
     readonly productsLink = [
         '/',
         AppNavRoutes.Products.root,
@@ -71,9 +102,12 @@ export class CartOverviewPageComponent implements OnInit {
     }
 
     onCheckout(): void {
-        if (this.cartItems().length === 0) return;
+        if (this.cartItems().length === 0 || this.addressForm.invalid) {
+            this.addressForm.markAllAsTouched();
+            return;
+        }
 
-        const payload = toCreateOrderDto(this.cartItems());
+        const payload = toCreateOrderDto(this.cartItems(), this.addressForm.getRawValue());
         if (!payload) return;
 
         this.isSubmitting.set(true);
@@ -108,4 +142,8 @@ export class CartOverviewPageComponent implements OnInit {
     retry(): void {
         this.productService.loadAll().pipe(take(1)).subscribe();
     }
+}
+
+function nonWhitespaceValidator(control: AbstractControl<string>) {
+    return control.value.trim().length > 0 ? null : { whitespace: true };
 }

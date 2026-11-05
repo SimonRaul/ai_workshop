@@ -2,6 +2,7 @@ package msg.onlineshopapi.integration;
 
 import msg.onlineshopapi.exception.OrderNotProcessableException;
 import msg.onlineshopapi.model.Location;
+import msg.onlineshopapi.model.Address;
 import msg.onlineshopapi.model.Order;
 import msg.onlineshopapi.model.OrderDetail;
 import msg.onlineshopapi.model.Product;
@@ -139,6 +140,7 @@ class OrderServiceTest {
                 .quantity(3)
                 .build();
         Order order = Order.builder()
+                .address(address())
                 .orderDetails(new HashSet<>(Set.of(detail)))
                 .build();
 
@@ -166,6 +168,7 @@ class OrderServiceTest {
                 .quantity(5)
                 .build();
         Order order = Order.builder()
+                .address(address())
                 .orderDetails(new HashSet<>(Set.of(detail)))
                 .build();
 
@@ -210,6 +213,7 @@ class OrderServiceTest {
                 .quantity(3)
                 .build();
         Order order = Order.builder()
+                .address(address())
                 .orderDetails(new HashSet<>(Set.of(laptopDetail, mouseDetail)))
                 .build();
 
@@ -261,6 +265,7 @@ class OrderServiceTest {
                 .quantity(5)
                 .build();
         Order order = Order.builder()
+                .address(address())
                 .orderDetails(new HashSet<>(Set.of(laptopDetail, keyboardDetail)))
                 .build();
 
@@ -271,5 +276,11 @@ class OrderServiceTest {
         Stock unchangedKeyboardStock = stockRepository.findById(keyboardStockId).orElseThrow();
         assertThat(unchangedLaptopStock.getQuantity()).isEqualTo(10);
         assertThat(unchangedKeyboardStock.getQuantity()).isEqualTo(1);
+    }
+
+    private Address address() {
+        return Address.builder()
+                .country("Romania").city("Cluj-Napoca").county("Cluj")
+                .streetAddress("Strada Memorandumului 1").build();
     }
 }

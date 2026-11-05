@@ -42,7 +42,7 @@ describe('CartOverviewPageComponent', () => {
 
     beforeEach(() => {
         // Mock console.error to suppress expected error logs during error handling tests
-        consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+        consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
         cartServiceMock = {
             items: signal([...MOCK_CART_ITEMS]),
             totalItems: signal(3),
@@ -180,6 +180,12 @@ describe('CartOverviewPageComponent', () => {
         it('should create order and navigate to orders on success', () => {
             // Prepare
             fixture.detectChanges();
+            component.addressForm.setValue({
+                country: 'Romania',
+                city: 'Cluj-Napoca',
+                county: 'Cluj',
+                streetAddress: 'Strada Memorandumului 1'
+            });
 
             // Action
             component.onCheckout();
@@ -198,6 +204,12 @@ describe('CartOverviewPageComponent', () => {
             // Prepare
             ordersServiceMock.create.mockReturnValue(throwError(() => new Error('Failed')));
             fixture.detectChanges();
+            component.addressForm.setValue({
+                country: 'Romania',
+                city: 'Cluj-Napoca',
+                county: 'Cluj',
+                streetAddress: 'Strada Memorandumului 1'
+            });
 
             // Action
             component.onCheckout();

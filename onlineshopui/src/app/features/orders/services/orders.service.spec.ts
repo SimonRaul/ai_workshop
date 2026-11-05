@@ -227,6 +227,12 @@ describe('OrdersService', () => {
         it('should create a new order and add to orders signal', () => {
             // Prepare
             const createOrderData: CreateOrderDto = {
+                address: {
+                    country: 'Romania',
+                    city: 'Cluj-Napoca',
+                    county: 'Cluj',
+                    streetAddress: 'Strada Memorandumului 1'
+                },
                 items: [
                     {
                         productId: 'prod-3',
@@ -268,6 +274,12 @@ describe('OrdersService', () => {
         it('should send correct request body', () => {
             // Prepare
             const createOrderData: CreateOrderDto = {
+                address: {
+                    country: 'Romania',
+                    city: 'Cluj-Napoca',
+                    county: 'Cluj',
+                    streetAddress: 'Strada Memorandumului 1'
+                },
                 items: [
                     {
                         productId: 'prod-1',
@@ -293,6 +305,12 @@ describe('OrdersService', () => {
         it('should handle error when creating order fails', () => {
             // Prepare
             const createOrderData: CreateOrderDto = {
+                address: {
+                    country: 'Romania',
+                    city: 'Cluj-Napoca',
+                    county: 'Cluj',
+                    streetAddress: 'Strada Memorandumului 1'
+                },
                 items: [
                     {
                         productId: 'prod-1',
