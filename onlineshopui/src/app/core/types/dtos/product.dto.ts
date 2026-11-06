@@ -1,3 +1,5 @@
+import { SupplierDto } from './supplier.dto';
+
 export type ProductCategoryDto = {
     id: string;
     name: string;
@@ -20,8 +22,7 @@ export type CreateProductRequest = Omit<ProductDto, 'id' | 'category' | 'supplie
     supplierId: string;
 };
 
-export type UpdateProductRequest = Partial<ProductDto> & {
+export type UpdateProductRequest = Partial<Omit<ProductDto, 'category' | 'supplier'>> & {
     categoryId?: string;
     supplierId?: string;
 };
-import { SupplierDto } from './supplier.dto';

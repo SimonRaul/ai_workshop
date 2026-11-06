@@ -5,9 +5,10 @@ export const MOCK_SUPPLIERS: SupplierDto[] = [
         id: 'sup-legacy',
         name: 'Legacy Supplier',
         location: 'Unknown',
-        description: 'Placeholder supplier assigned to products that existed before supplier tracking.',
-        contactEmail: '',
-        phone: ''
+        description:
+            'Placeholder supplier assigned to products that existed before supplier tracking.',
+        contactEmail: null,
+        phone: null
     },
     {
         id: 'sup-1',

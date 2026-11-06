@@ -27,7 +27,8 @@ public class SupplierController {
     private final SupplierMapper supplierMapper;
 
     @GetMapping
-    @Operation(summary = "Get all suppliers", description = "Returns a list of all suppliers.")
+    @Operation(summary = "Get all suppliers",
+            description = "Returns the unpaginated supplier lookup list; the dataset is currently small.")
     @ApiResponse(responseCode = "200", description = "Suppliers retrieved successfully")
     public List<SupplierDto> getAll() {
         return supplierService.findAll().stream()

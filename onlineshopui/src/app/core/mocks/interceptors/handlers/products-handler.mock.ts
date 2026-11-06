@@ -25,15 +25,6 @@ export function handleProductsFeature(
         return handleGetCategories();
     }
 
-    if (method === 'GET' && path === '/suppliers') {
-        return handleGetSuppliers();
-    }
-
-    if (method === 'GET' && path.match(/^\/suppliers\/[\w-]+$/)) {
-        const id = path.split('/').pop()!;
-        return handleGetSupplierById(id);
-    }
-
     if (method === 'GET' && path.match(/^\/products\/[\w-]+$/)) {
         const id = path.split('/').pop()!;
         return handleGetProductById(id);
@@ -64,30 +55,6 @@ function handleGetCategories(): HttpResponse<unknown> {
     return new HttpResponse({
         status: 200,
         body: MOCK_CATEGORIES
-    });
-}
-
-function handleGetSuppliers(): HttpResponse<unknown> {
-    return new HttpResponse({
-        status: 200,
-        body: MOCK_SUPPLIERS
-    });
-}
-
-function handleGetSupplierById(id: string): HttpResponse<unknown> {
-    const supplier = MOCK_SUPPLIERS.find(s => s.id === id);
-
-    if (!supplier) {
-        return new HttpResponse({
-            status: 404,
-            statusText: 'Not Found',
-            body: { message: 'Supplier not found' }
-        });
-    }
-
-    return new HttpResponse({
-        status: 200,
-        body: supplier
     });
 }
 

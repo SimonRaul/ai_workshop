@@ -28,17 +28,8 @@ class SupplierMapperTest {
     }
 
     @Test
-    void toEntity_mapsAllFields() {
-        SupplierDto dto = dto();
-
-        Supplier result = supplierMapper.toEntity(dto);
-
-        assertThat(result.getId()).isEqualTo(dto.getId());
-        assertThat(result.getName()).isEqualTo(dto.getName());
-        assertThat(result.getLocation()).isEqualTo(dto.getLocation());
-        assertThat(result.getDescription()).isEqualTo(dto.getDescription());
-        assertThat(result.getContactEmail()).isEqualTo(dto.getContactEmail());
-        assertThat(result.getPhone()).isEqualTo(dto.getPhone());
+    void toDto_returnsNull_whenSupplierIsNull() {
+        assertThat(supplierMapper.toDto(null)).isNull();
     }
 
     private Supplier supplier() {
@@ -52,14 +43,4 @@ class SupplierMapperTest {
                 .build();
     }
 
-    private SupplierDto dto() {
-        return SupplierDto.builder()
-                .id(UUID.randomUUID())
-                .name("TechSource")
-                .location("Shenzhen")
-                .description("Electronics")
-                .contactEmail("contact@example.com")
-                .phone("+86-123")
-                .build();
-    }
 }

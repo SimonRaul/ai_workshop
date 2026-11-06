@@ -6,7 +6,6 @@ import msg.onlineshopapi.model.OrderDetail;
 import msg.onlineshopapi.model.Product;
 import msg.onlineshopapi.model.Stock;
 import msg.onlineshopapi.model.StockId;
-import msg.onlineshopapi.model.Supplier;
 import msg.onlineshopapi.repository.StockRepository;
 import msg.onlineshopapi.service.strategy.SingleLocationStrategy;
 import org.junit.jupiter.api.Test;
@@ -185,9 +184,7 @@ class SingleLocationStrategyTest {
     }
 
     private Product product(UUID id) {
-        return Product.builder().id(id).name("Product")
-                .supplier(Supplier.builder().id(UUID.randomUUID()).name("Supplier").location("Location").build())
-                .build();
+        return Product.builder().id(id).name("Product").build();
     }
 
     private Location location(UUID id) {

@@ -17,5 +17,8 @@ VALUES ('5099ec00-0000-0000-0000-000000000001', 'Legacy Supplier', 'Unknown',
 
 UPDATE products SET supplier_id = '5099ec00-0000-0000-0000-000000000001' WHERE supplier_id IS NULL;
 
-ALTER TABLE products ALTER COLUMN supplier_id SET NOT NULL;
-ALTER TABLE products ADD CONSTRAINT fk_products_supplier FOREIGN KEY (supplier_id) REFERENCES suppliers (id);
+ALTER TABLE products
+    ALTER COLUMN supplier_id SET NOT NULL,
+    ADD CONSTRAINT fk_products_supplier FOREIGN KEY (supplier_id) REFERENCES suppliers (id);
+
+CREATE INDEX idx_products_supplier_id ON products (supplier_id);

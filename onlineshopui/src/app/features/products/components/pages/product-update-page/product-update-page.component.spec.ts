@@ -21,6 +21,8 @@ describe('ProductUpdatePageComponent', () => {
         suppliers: ReturnType<typeof signal>;
         loading: ReturnType<typeof signal>;
         error: ReturnType<typeof signal>;
+        suppliersLoading: ReturnType<typeof signal>;
+        suppliersError: ReturnType<typeof signal>;
         loadById: ReturnType<typeof vi.fn>;
         loadCategories: ReturnType<typeof vi.fn>;
         loadSuppliers: ReturnType<typeof vi.fn>;
@@ -42,13 +44,15 @@ describe('ProductUpdatePageComponent', () => {
 
     beforeEach(() => {
         // Mock console.error to suppress expected error logs during error handling tests
-        consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+        consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
         productServiceMock = {
             selectedProduct: signal(MOCK_PRODUCTS[0]),
             categories: signal([...MOCK_CATEGORIES]),
             suppliers: signal([...MOCK_SUPPLIERS]),
             loading: signal(false),
             error: signal(null),
+            suppliersLoading: signal(false),
+            suppliersError: signal(null),
             loadById: vi.fn().mockReturnValue(of(MOCK_PRODUCTS[0])),
             loadCategories: vi.fn().mockReturnValue(of(MOCK_CATEGORIES)),
             loadSuppliers: vi.fn().mockReturnValue(of(MOCK_SUPPLIERS)),

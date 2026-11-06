@@ -24,10 +24,12 @@ public class Supplier {
     @Column(nullable = false)
     private String location;
 
+    @Column(length = 1000)
     private String description;
 
     @Column(name = "contact_email")
     private String contactEmail;
 
+    @Column(length = 50)
     private String phone;
 }

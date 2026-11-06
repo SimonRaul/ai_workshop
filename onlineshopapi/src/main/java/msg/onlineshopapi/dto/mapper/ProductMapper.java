@@ -3,9 +3,9 @@ package msg.onlineshopapi.dto.mapper;
 import lombok.RequiredArgsConstructor;
 import msg.onlineshopapi.dto.ProductRequestDto;
 import msg.onlineshopapi.dto.ProductResponseDto;
-import msg.onlineshopapi.model.Supplier;
 import msg.onlineshopapi.model.Product;
 import msg.onlineshopapi.model.ProductCategory;
+import msg.onlineshopapi.model.Supplier;
 import org.springframework.stereotype.Component;
 
 @Component

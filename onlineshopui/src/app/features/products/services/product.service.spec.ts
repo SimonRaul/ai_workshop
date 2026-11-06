@@ -269,8 +269,8 @@ describe('ProductService', () => {
 
                 // Verify
                 expect(service.suppliers()).toEqual(MOCK_SUPPLIERS);
-                expect(service.loading()).toBe(false);
-                expect(service.error()).toBeNull();
+                expect(service.suppliersLoading()).toBe(false);
+                expect(service.suppliersError()).toBeNull();
             });
 
             it('should handle error when loading suppliers fails', () => {
@@ -285,8 +285,30 @@ describe('ProductService', () => {
 
                 // Verify
                 expect(service.suppliers()).toEqual([]);
-                expect(service.error()).toBe('Failed to load suppliers');
+                expect(service.suppliersError()).toBe('Failed to load suppliers');
+                expect(service.suppliersLoading()).toBe(false);
+            });
+
+            it('keeps supplier state independent from category loading', () => {
+                // Prepare
+                service.loadCategories().subscribe();
+                service.loadSuppliers().subscribe();
+
+                // Action
+                const categoryRequest = httpMock.expectOne(
+                    `${MOCK_ENVIRONMENT_CONFIG.apiUrl}/products/categories`
+                );
+                const supplierRequest = httpMock.expectOne(
+                    `${MOCK_ENVIRONMENT_CONFIG.apiUrl}/suppliers`
+                );
+                categoryRequest.flush(MOCK_CATEGORIES);
+
+                // Verify
                 expect(service.loading()).toBe(false);
+                expect(service.suppliersLoading()).toBe(true);
+
+                supplierRequest.flush(MOCK_SUPPLIERS);
+                expect(service.suppliersLoading()).toBe(false);
             });
         });
 

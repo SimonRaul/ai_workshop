@@ -31,11 +31,11 @@ public class Product {
 
     private Double weight;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id", nullable = false)
     private ProductCategory category;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "supplier_id", nullable = false)
     private Supplier supplier;
 

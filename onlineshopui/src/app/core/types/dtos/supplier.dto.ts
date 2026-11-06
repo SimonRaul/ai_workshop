@@ -2,7 +2,7 @@ export type SupplierDto = {
     id: string;
     name: string;
     location: string;
-    description: string;
-    contactEmail: string;
-    phone: string;
+    description: string | null;
+    contactEmail: string | null;
+    phone: string | null;
 };

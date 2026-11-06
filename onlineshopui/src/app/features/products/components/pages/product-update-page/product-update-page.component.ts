@@ -28,6 +28,8 @@ export class ProductUpdatePageComponent implements OnInit {
     readonly suppliers = this.productService.suppliers;
     readonly loading = this.productService.loading;
     readonly error = this.productService.error;
+    readonly suppliersLoading = this.productService.suppliersLoading;
+    readonly suppliersError = this.productService.suppliersError;
     readonly isSubmitting = signal(false);
     private readonly productId = signal<string | null>(null);
 
@@ -42,7 +44,7 @@ export class ProductUpdatePageComponent implements OnInit {
                     weight: prod.weight,
                     imageUrl: prod.imageUrl,
                     categoryId: prod.category.id,
-                    supplierId: prod.supplier.id
+                    supplierId: prod.supplier?.id ?? ''
                 });
             }
         });
@@ -61,9 +63,7 @@ export class ProductUpdatePageComponent implements OnInit {
         const id = this.route.snapshot.paramMap.get('id');
         if (id) {
             this.productId.set(id);
-            this.productService.loadById(id).pipe(take(1)).subscribe();
-            this.productService.loadCategories().pipe(take(1)).subscribe();
-            this.productService.loadSuppliers().pipe(take(1)).subscribe();
+            this.loadData(id);
         } else {
             this.router.navigate([
                 `/${AppNavRoutes.Products.root}/${AppNavRoutes.Products.features.overview}`
@@ -126,9 +126,13 @@ export class ProductUpdatePageComponent implements OnInit {
     retry(): void {
         const id = this.productId();
         if (id) {
-            this.productService.loadById(id).pipe(take(1)).subscribe();
-            this.productService.loadCategories().pipe(take(1)).subscribe();
-            this.productService.loadSuppliers().pipe(take(1)).subscribe();
+            this.loadData(id);
         }
+    }
+
+    private loadData(id: string): void {
+        this.productService.loadById(id).pipe(take(1)).subscribe();
+        this.productService.loadCategories().pipe(take(1)).subscribe();
+        this.productService.loadSuppliers().pipe(take(1)).subscribe();
     }
 }

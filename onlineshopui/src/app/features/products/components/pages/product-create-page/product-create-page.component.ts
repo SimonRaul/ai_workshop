@@ -25,6 +25,8 @@ export class ProductCreatePageComponent implements OnInit {
     readonly categories = this.productService.categories;
     readonly suppliers = this.productService.suppliers;
     readonly loading = this.productService.loading;
+    readonly suppliersLoading = this.productService.suppliersLoading;
+    readonly suppliersError = this.productService.suppliersError;
     readonly isSubmitting = signal(false);
 
     constructor() {

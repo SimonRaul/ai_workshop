@@ -109,7 +109,9 @@ class ProductControllerTest {
     @WithMockUser(roles = "ADMIN")
     void create_returnsProduct_whenAdmin() throws Exception {
         ProductRequestDto request = ProductRequestDto.builder()
-                .name("Laptop").price(BigDecimal.valueOf(999.99)).categoryId(categoryId).supplierId(supplierId).build();
+                .name("Laptop").description("Portable computer").price(BigDecimal.valueOf(999.99))
+                .weight(1.5).imageUrl("https://example.com/laptop.jpg")
+                .categoryId(categoryId).supplierId(supplierId).build();
         Product entity = Product.builder().name("Laptop").supplier(Supplier.builder().id(supplierId).build()).build();
         Product saved = Product.builder().id(laptopId).name("Laptop")
                 .supplier(Supplier.builder().id(supplierId).build()).build();
@@ -131,7 +133,9 @@ class ProductControllerTest {
     @WithMockUser(roles = "CUSTOMER")
     void create_returns403_whenNotAdmin() throws Exception {
         ProductRequestDto request = ProductRequestDto.builder()
-                .name("Laptop").price(BigDecimal.valueOf(999.99)).categoryId(categoryId).supplierId(supplierId).build();
+                .name("Laptop").description("Portable computer").price(BigDecimal.valueOf(999.99))
+                .weight(1.5).imageUrl("https://example.com/laptop.jpg")
+                .categoryId(categoryId).supplierId(supplierId).build();
 
         mockMvc.perform(post("/products")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -143,7 +147,9 @@ class ProductControllerTest {
     @WithMockUser(roles = "ADMIN")
     void update_returnsProduct_whenAdmin() throws Exception {
         ProductRequestDto request = ProductRequestDto.builder()
-                .name("Updated Laptop").price(BigDecimal.valueOf(1099.99)).categoryId(categoryId).supplierId(supplierId).build();
+                .name("Updated Laptop").description("Portable computer").price(BigDecimal.valueOf(1099.99))
+                .weight(1.5).imageUrl("https://example.com/laptop.jpg")
+                .categoryId(categoryId).supplierId(supplierId).build();
         Product entity = Product.builder().name("Updated Laptop").supplier(Supplier.builder().id(supplierId).build()).build();
         Product updated = Product.builder().id(laptopId).name("Updated Laptop")
                 .supplier(Supplier.builder().id(supplierId).build()).build();
@@ -164,7 +170,9 @@ class ProductControllerTest {
     @WithMockUser(roles = "ADMIN")
     void update_returns404_whenProductNotFound() throws Exception {
         ProductRequestDto request = ProductRequestDto.builder()
-                .name("Laptop").price(BigDecimal.valueOf(999.99)).categoryId(categoryId).supplierId(supplierId).build();
+                .name("Laptop").description("Portable computer").price(BigDecimal.valueOf(999.99))
+                .weight(1.5).imageUrl("https://example.com/laptop.jpg")
+                .categoryId(categoryId).supplierId(supplierId).build();
         Product entity = Product.builder().name("Laptop").supplier(Supplier.builder().id(supplierId).build()).build();
 
         when(productMapper.toEntity(any(ProductRequestDto.class))).thenReturn(entity);
@@ -182,7 +190,9 @@ class ProductControllerTest {
     @WithMockUser(roles = "CUSTOMER")
     void update_returns403_whenNotAdmin() throws Exception {
         ProductRequestDto request = ProductRequestDto.builder()
-                .name("Laptop").price(BigDecimal.valueOf(999.99)).categoryId(categoryId).supplierId(supplierId).build();
+                .name("Laptop").description("Portable computer").price(BigDecimal.valueOf(999.99))
+                .weight(1.5).imageUrl("https://example.com/laptop.jpg")
+                .categoryId(categoryId).supplierId(supplierId).build();
 
         mockMvc.perform(put("/products/{id}", laptopId)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -222,6 +232,37 @@ class ProductControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = "ADMIN")
+    void create_returns400_whenSupplierIdMissing() throws Exception {
+        ProductRequestDto request = ProductRequestDto.builder()
+                .name("Laptop").description("Portable computer").price(BigDecimal.valueOf(999.99))
+                .weight(1.5).imageUrl("https://example.com/laptop.jpg")
+                .categoryId(categoryId).build();
+
+        mockMvc.perform(post("/products")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void create_returns404_whenSupplierDoesNotExist() throws Exception {
+        ProductRequestDto request = validRequest("Laptop", supplierId);
+        Product entity = Product.builder().name("Laptop")
+                .supplier(Supplier.builder().id(supplierId).build()).build();
+        when(productMapper.toEntity(any(ProductRequestDto.class))).thenReturn(entity);
+        when(productService.save(entity))
+                .thenThrow(new ResourceNotFoundException("Supplier not found with id: " + supplierId));
+
+        mockMvc.perform(post("/products")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error").value("Supplier not found with id: " + supplierId));
+    }
+
+    @Test
     @WithMockUser(roles = "CUSTOMER")
     void delete_returns403_whenNotAdmin() throws Exception {
         mockMvc.perform(delete("/products/{id}", laptopId))
@@ -235,6 +276,18 @@ class ProductControllerTest {
                 .price(BigDecimal.valueOf(999.99))
                 .category(ProductCategoryDto.builder().id(categoryId).name("Electronics").build())
                 .supplier(SupplierDto.builder().id(supplierId).name("TechSource").location("Shenzhen").build())
+                .build();
+    }
+
+    private ProductRequestDto validRequest(String name, UUID supplierId) {
+        return ProductRequestDto.builder()
+                .name(name)
+                .description("Portable computer")
+                .price(BigDecimal.valueOf(999.99))
+                .weight(1.5)
+                .imageUrl("https://example.com/laptop.jpg")
+                .categoryId(categoryId)
+                .supplierId(supplierId)
                 .build();
     }
 }
