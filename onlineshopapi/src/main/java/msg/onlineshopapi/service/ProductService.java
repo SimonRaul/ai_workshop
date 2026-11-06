@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import msg.onlineshopapi.exception.ProductInOrderException;
 import msg.onlineshopapi.exception.ResourceNotFoundException;
 import msg.onlineshopapi.model.Product;
+import msg.onlineshopapi.model.Supplier;
 import msg.onlineshopapi.repository.OrderDetailRepository;
 import msg.onlineshopapi.repository.ProductRepository;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final OrderDetailRepository orderDetailRepository;
+    private final SupplierService supplierService;
 
     public List<Product> findAll() {
         return productRepository.findAll();
@@ -28,6 +30,7 @@ public class ProductService {
     }
 
     public Product save(Product product) {
+        product.setSupplier(resolveSupplier(product.getSupplier()));
         return productRepository.save(product);
     }
 
@@ -39,8 +42,19 @@ public class ProductService {
         existing.setPrice(product.getPrice());
         existing.setWeight(product.getWeight());
         existing.setCategory(product.getCategory());
+        existing.setSupplier(resolveSupplier(product.getSupplier()));
         existing.setImageUrl(product.getImageUrl());
         return productRepository.save(existing);
+    }
+
+    private Supplier resolveSupplier(Supplier supplier) {
+        UUID supplierId = supplier == null ? null : supplier.getId();
+        if (supplierId == null) {
+            throw new ResourceNotFoundException("Supplier not found with id: null");
+        }
+
+        return supplierService.findById(supplierId)
+                .orElseThrow(() -> new ResourceNotFoundException("Supplier not found with id: " + supplierId));
     }
 
     public void deleteById(UUID id) {

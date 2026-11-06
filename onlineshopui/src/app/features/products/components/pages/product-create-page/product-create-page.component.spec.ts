@@ -7,6 +7,7 @@ import { ProductCreatePageComponent } from './product-create-page.component';
 import { ProductService } from '../../../services/product.service';
 import { NotificationsService } from '../../../../../core/services/notifications.service';
 import { MOCK_CATEGORIES, MOCK_PRODUCTS } from '../../../../../core/mocks/data/products.mock';
+import { MOCK_SUPPLIERS } from '../../../../../core/mocks/data/suppliers.mock';
 import { AppNavRoutes } from '../../../../../core/config/constants/navigation.constants';
 import { ValidationMessages } from '../../../../../core/types/providers/validation-messages';
 import { DefaultValidationMessages } from '../../../../../core/config/constants/validation.constants';
@@ -16,8 +17,12 @@ describe('ProductCreatePageComponent', () => {
     let fixture: ComponentFixture<ProductCreatePageComponent>;
     let productServiceMock: {
         categories: ReturnType<typeof signal>;
+        suppliers: ReturnType<typeof signal>;
         loading: ReturnType<typeof signal>;
+        suppliersLoading: ReturnType<typeof signal>;
+        suppliersError: ReturnType<typeof signal>;
         loadCategories: ReturnType<typeof vi.fn>;
+        loadSuppliers: ReturnType<typeof vi.fn>;
         create: ReturnType<typeof vi.fn>;
     };
     let routerMock: {
@@ -31,11 +36,15 @@ describe('ProductCreatePageComponent', () => {
 
     beforeEach(() => {
         // Mock console.error to suppress expected error logs during error handling tests
-        consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+        consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
         productServiceMock = {
             categories: signal([...MOCK_CATEGORIES]),
+            suppliers: signal([...MOCK_SUPPLIERS]),
             loading: signal(false),
+            suppliersLoading: signal(false),
+            suppliersError: signal(null),
             loadCategories: vi.fn().mockReturnValue(of(MOCK_CATEGORIES)),
+            loadSuppliers: vi.fn().mockReturnValue(of(MOCK_SUPPLIERS)),
             create: vi.fn().mockReturnValue(of(MOCK_PRODUCTS[0]))
         };
 
@@ -87,6 +96,7 @@ describe('ProductCreatePageComponent', () => {
 
             // Verify
             expect(productServiceMock.loadCategories).toHaveBeenCalled();
+            expect(productServiceMock.loadSuppliers).toHaveBeenCalled();
         });
 
         it('should initialize with empty form', () => {
@@ -103,7 +113,8 @@ describe('ProductCreatePageComponent', () => {
                 price: 0,
                 weight: 0,
                 imageUrl: '',
-                categoryId: ''
+                categoryId: '',
+                supplierId: ''
             });
         });
     });
@@ -131,7 +142,8 @@ describe('ProductCreatePageComponent', () => {
                 price: 99.99,
                 weight: 1.5,
                 imageUrl: 'http://test.com/image.jpg',
-                categoryId: 'cat-1'
+                categoryId: 'cat-1',
+                supplierId: 'sup-1'
             });
 
             // Action
@@ -139,6 +151,15 @@ describe('ProductCreatePageComponent', () => {
 
             // Verify
             expect(productServiceMock.create).toHaveBeenCalled();
+            expect(productServiceMock.create).toHaveBeenCalledWith({
+                name: 'Test Product',
+                description: 'Test Description',
+                price: 99.99,
+                weight: 1.5,
+                imageUrl: 'http://test.com/image.jpg',
+                categoryId: 'cat-1',
+                supplierId: 'sup-1'
+            });
             expect(notificationsServiceMock.notifySuccess).toHaveBeenCalledWith({
                 title: 'Product created',
                 message: 'Your new product is now available.'
@@ -157,7 +178,8 @@ describe('ProductCreatePageComponent', () => {
                 price: 99.99,
                 weight: 1.5,
                 imageUrl: 'http://test.com/image.jpg',
-                categoryId: 'cat-1'
+                categoryId: 'cat-1',
+                supplierId: 'sup-1'
             });
             productServiceMock.create.mockReturnValue(throwError(() => new Error('Failed')));
 

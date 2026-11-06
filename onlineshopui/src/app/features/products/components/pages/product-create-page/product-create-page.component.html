@@ -7,16 +7,31 @@
         </div>
 
         <!-- Loading State for Categories -->
-        @if (loading() && categories().length === 0) {
+        @if (
+            (loading() || suppliersLoading()) &&
+            (categories().length === 0 || suppliers().length === 0)
+        ) {
             <app-spinner [overlay]="true"></app-spinner>
         }
 
+        @if (suppliersError()) {
+            <div
+                class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6 text-center"
+            >
+                <p class="text-red-800 dark:text-red-200">{{ suppliersError() }}</p>
+            </div>
+        }
+
         <!-- Form -->
-        @if (!loading() || categories().length > 0) {
+        @if (
+            (!loading() && !suppliersLoading()) ||
+            (categories().length > 0 && suppliers().length > 0)
+        ) {
             <app-card>
                 <app-product-form
                     [form]="form"
                     [categories]="categories()"
+                    [suppliers]="suppliers()"
                     [isSubmitting]="isSubmitting()"
                     [submitLabel]="'Create Product'"
                     (formSubmit)="onSubmit()"
